@@ -20,13 +20,20 @@ class IRC:
     def connect(self, server, port, password = ""):
         print("Connecting to: " + server)
         self.irc.connect((server, port))
-        time.sleep(3)
-        # Authentication
+        time.sleep(1.5)
+
         if password != "":
             self.irc.send(bytes("PASS " + password, "UTF-8"))
 
         self.irc.send(bytes("NICK " + self.username + "\n", "UTF-8"))
         self.irc.send(bytes("USER " + self.username + " OrangeHostname" + " 10.0.0.2" + " :MIGHTY ORANGE", "UTF-8"))
+        print(">>> REGISTRATION SENT")
+        self.joinChannel("#talk")
+        time.sleep(1)
+        self.get_response()
+        time.sleep(1)
+        #self.joinChannel("#talk")
+        #self.get_response()
         time.sleep(5)
 
     def joinChannel(self, channel):
@@ -38,6 +45,7 @@ class IRC:
         pingRegex = re.compile(r"^PING :(.*)", re.M)
         resp = self.irc.recv(2040).decode("UTF-8")
         print("RCV >>" + resp)
+
         if pingRegex.search(resp):
             mo = pingRegex.search(resp)
             print("Responding to PING")
